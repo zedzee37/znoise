@@ -17,7 +17,7 @@ type PerlinNoise struct {
 	rng *rand.Rand
 }
 
-const GridSize uint = 256
+const GridSize uint = 20
 
 func generateRandomVector(rng *rand.Rand) vector.Vec2 {
 	angle := rng.Float64() * (2 * math.Pi)
@@ -48,51 +48,47 @@ func NewPerlinNoise(seed int64, octaves int, lacunarity float32, gain float32) P
 	}
 } 
 
-func (noise PerlinNoise) Get(x float64, y float64) (float64, error) {
-	if x < 0.0 || x > 1.0 || y < 0.0 || y > 1.0 {
-		return 0.0, fmt.Errorf(
-			"Expected a x/y value between zero and one, got: %g, %g.", x, y,
-		)	
-	}
+func (noise *PerlinNoise) Get(x float64, y float64) (float64, error) {
+    if x < 0.0 || x > 1.0 || y < 0.0 || y > 1.0 {
+        return 0.0, fmt.Errorf(
+            "Expected a x/y value between zero and one, got: %g, %g.", x, y,
+        )    
+    }
 
-	scaledX := x * float64(noise.gridSize)
-	scaledY := y * float64(noise.gridSize)
+    scaledX := x * float64(noise.gridSize-1)
+    scaledY := y * float64(noise.gridSize-1)
 
-	leftX, topY := int(math.Floor(scaledX)), int(math.Floor(scaledY))
-	rightX := leftX + 1
-	bottomY := topY + 1	
+    x0, y0 := int(math.Floor(scaledX)), int(math.Floor(scaledY))
+    x1, y1 := x0+1, y0+1
 
-	v1 := noise.grid[topY * int(noise.gridSize) + leftX]
-	v2 := noise.grid[topY * int(noise.gridSize) + rightX]
-	v3 := noise.grid[bottomY * int(noise.gridSize) + leftX]
-	v4 := noise.grid[bottomY * int(noise.gridSize) + rightX]
-	
-	coords := vector.Vec2{
-		X: x,
-		Y: y,
-	}
+    x0 = x0 % int(noise.gridSize)
+    x1 = x1 % int(noise.gridSize)
+    y0 = y0 % int(noise.gridSize)
+    y1 = y1 % int(noise.gridSize)
 
-	v1Offset := vector.Vec2{
-		X: float64(leftX) / 512,
-		Y: float64(topY) / 512,
-	}.Sub(coords)
-	v2Offset := vector.Vec2{
-		X: float64(rightX) / 512,
-		Y: float64(topY) / 512,
-	}.Sub(coords)
-	v3Offset := vector.Vec2{
-		X: float64(leftX) / 512,
-		Y: float64(bottomY) / 512,
-	}.Sub(coords)
-	v4Offset := vector.Vec2{
-		X: float64(rightX) / 512,
-		Y: float64(bottomY) / 512,
-	}.Sub(coords)
+    g00 := noise.grid[y0*int(noise.gridSize)+x0]
+    g01 := noise.grid[y1*int(noise.gridSize)+x0]
+    g10 := noise.grid[y0*int(noise.gridSize)+x1]
+    g11 := noise.grid[y1*int(noise.gridSize)+x1]
 
-	v1Dot := v1.Dot(v1Offset)
-	v2Dot := v2.Dot(v2Offset)
-	v3Dot := v3.Dot(v3Offset)
-	v4Dot := v4.Dot(v4Offset)
+    xf, yf := scaledX-float64(x0), scaledY-float64(y0)
+    
+    d00 := vector.Vec2{X: xf, Y: yf}
+    d01 := vector.Vec2{X: xf, Y: yf-1}
+    d10 := vector.Vec2{X: xf-1, Y: yf}
+    d11 := vector.Vec2{X: xf-1, Y: yf-1}
 
-	return 1.0, nil
+    s := g00.Dot(d00)
+    t := g10.Dot(d10)
+    u := g01.Dot(d01)
+    v := g11.Dot(d11)
+
+    sx := xf * xf * (3 - 2*xf)
+    sy := yf * yf * (3 - 2*yf)
+
+    a := s + sx*(t-s)
+    b := u + sx*(v-u)
+    value := a + sy*(b-a)
+
+    return value, nil
 }
