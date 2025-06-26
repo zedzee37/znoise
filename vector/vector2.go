@@ -8,3 +8,10 @@ type Vec2 struct {
 func (v1 Vec2) Dot(v2 Vec2) float64 {
 	return v1.X*v2.X + v1.Y*v2.Y
 }
+
+func (v1 Vec2) Sub(v2 Vec2) Vec2 {
+	return Vec2{
+		v1.X - v2.X,
+		v1.Y - v2.Y,
+	}
+}
