@@ -66,29 +66,5 @@ func (noise *PerlinNoise) Get(x float64, y float64) (float64, error) {
     y0 = y0 % int(noise.gridSize)
     y1 = y1 % int(noise.gridSize)
 
-    g00 := noise.grid[y0*int(noise.gridSize)+x0]
-    g01 := noise.grid[y1*int(noise.gridSize)+x0]
-    g10 := noise.grid[y0*int(noise.gridSize)+x1]
-    g11 := noise.grid[y1*int(noise.gridSize)+x1]
 
-    xf, yf := scaledX-float64(x0), scaledY-float64(y0)
-    
-    d00 := vector.Vec2{X: xf, Y: yf}
-    d01 := vector.Vec2{X: xf, Y: yf-1}
-    d10 := vector.Vec2{X: xf-1, Y: yf}
-    d11 := vector.Vec2{X: xf-1, Y: yf-1}
-
-    s := g00.Dot(d00)
-    t := g10.Dot(d10)
-    u := g01.Dot(d01)
-    v := g11.Dot(d11)
-
-    sx := xf * xf * (3 - 2*xf)
-    sy := yf * yf * (3 - 2*yf)
-
-    a := s + sx*(t-s)
-    b := u + sx*(v-u)
-    value := a + sy*(b-a)
-
-    return value, nil
 }
