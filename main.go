@@ -9,7 +9,7 @@ import (
 
 func main() {
 	perlinNoise := noise.NewPerlinNoise(100, 1, 0.1, 1.0)
-	img, err := image.CreateNoiseImage(&perlinNoise, 500, 500)
+	img, err := image.CreateNoiseImage(&perlinNoise, 2000, 2000)
 
 	if err != nil {
 		panic(err)
