@@ -34,7 +34,7 @@ func NewPerlinNoise(
 	frequency float64,
 	persistence float64,
 	gain float64,
-) PerlinNoise {
+) *PerlinNoise {
 	randSource := rand.NewSource(seed)
 	rng := rand.New(randSource)
 
@@ -48,7 +48,8 @@ func NewPerlinNoise(
 		grids[i] = grid
 	}
 
-	return PerlinNoise {
+	noise := new(PerlinNoise)
+	*noise = PerlinNoise {
 		octaves,
 		lacunarity,
 		frequency,
@@ -58,7 +59,9 @@ func NewPerlinNoise(
 		GridSize,	
 		rng,
 	}
-} 
+ 
+	return noise 
+}
 
 func lerp(a float64, b float64, p float64) float64 {
 	return (1 - p)*a + p*b
