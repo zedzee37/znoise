@@ -17,7 +17,7 @@ type PerlinNoise struct {
 	rng *rand.Rand
 }
 
-const GridSize uint = 20
+const GridSize uint = 256
 
 func generateRandomVector(rng *rand.Rand) vector.Vec2 {
 	angle := rng.Float64() * (2 * math.Pi)
