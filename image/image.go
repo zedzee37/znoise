@@ -3,7 +3,7 @@ package image
 import (
 	"image"
 	"image/color"
-	"znoise/noise"
+	"github.com/zedzee37/znoise/noise"
 )
 
 func CreateNoiseImage(noise noise.Noise, width uint, height uint) (*image.RGBA, error) {

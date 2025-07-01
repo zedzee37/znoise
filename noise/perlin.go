@@ -3,7 +3,7 @@ package noise
 import (
 	"math"
 	"math/rand"
-	"znoise/vector"
+	"github.com/zedzee37/znoise/vector"
 )
 
 type PerlinNoise struct {
